@@ -62,11 +62,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codibre/boilerplate-base.git"
+    "url": "https://github.com/maxmilhas/winston-context-logger.git"
   },
-  "homepage": "https://github.com/codibre/boilerplate-base#readme",
+  "homepage": "https://github.com/maxmilhas/winston-context-logger#readme",
   "bugs": {
-    "url": "https://github.com/codibre/boilerplate-base/issues"
+    "url": "https://github.com/maxmilhas/winston-context-logger/issues"
   },
   "keywords": [],
   "license": "MIT",
