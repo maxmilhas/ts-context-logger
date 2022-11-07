@@ -1,6 +1,12 @@
 import { Logger } from 'winston';
 import { ContextInfoProvider } from './context-info-provider';
 
+type NumericFields<T extends object> = NonNullable<
+	{
+		[K in keyof T]: T[K] extends number ? K : never;
+	}[keyof T]
+>;
+
 export class ContextLogger<TContextLoggerMeta extends object> {
 	constructor(
 		private logger: Logger,
@@ -19,10 +25,23 @@ export class ContextLogger<TContextLoggerMeta extends object> {
 		meta[key] = value;
 	}
 
+	incMeta<TKey extends NumericFields<TContextLoggerMeta>>(
+		key: TKey,
+		value: number = 1,
+	) {
+		const previous =
+			(this.contextProvider.getContextInfo()?.[key] as unknown as number) ?? 0;
+		const result = previous + value;
+
+		this.addMeta(key, result as unknown as TContextLoggerMeta[TKey]);
+
+		return result;
+	}
+
 	log(
 		level: 'info' | 'error' | 'warn' | 'debug',
 		message: string,
-		meta?: TContextLoggerMeta,
+		meta?: Partial<TContextLoggerMeta>,
 	) {
 		this.logger[level](message, {
 			correlationId: this.contextProvider.correlationId,
@@ -30,17 +49,17 @@ export class ContextLogger<TContextLoggerMeta extends object> {
 			...meta,
 		});
 	}
-	info(message: string, meta?: TContextLoggerMeta): void {
+	info(message: string, meta?: Partial<TContextLoggerMeta>): void {
 		this.log('info', message, meta);
 	}
 
-	error(message: string, meta?: TContextLoggerMeta): void {
+	error(message: string, meta?: Partial<TContextLoggerMeta>): void {
 		this.log('error', message, meta);
 	}
-	warn(message: string, meta?: TContextLoggerMeta): void {
+	warn(message: string, meta?: Partial<TContextLoggerMeta>): void {
 		this.log('warn', message, meta);
 	}
-	debug(message: string, meta?: TContextLoggerMeta): void {
+	debug(message: string, meta?: Partial<TContextLoggerMeta>): void {
 		this.log('debug', message, meta);
 	}
 }
