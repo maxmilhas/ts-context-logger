@@ -7,7 +7,7 @@ type NumericFields<T extends object> = NonNullable<
 	}[keyof T]
 >;
 
-export class ContextLogger<TContextLoggerMeta extends object> {
+export class ContextLogger<TContextLoggerMeta extends object = any> {
 	constructor(
 		private logger: Logger,
 		private contextProvider: ContextInfoProvider<TContextLoggerMeta>,
