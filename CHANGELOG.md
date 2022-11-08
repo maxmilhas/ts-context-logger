@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.1...v0.1.2) (2022-11-08)
+
+
+### Bug Fixes
+
+* setting default TContextLoggerMeta to any ([00dd27f](https://github.com/maxmilhas/winston-context-logger/commit/00dd27f3c01986371985e196cad553c97c8ff522))
+
 ## [0.1.1](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.0...v0.1.1) (2022-11-07)
 
 
