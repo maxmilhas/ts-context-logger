@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.2...v0.1.3) (2022-11-09)
+
+
+### Bug Fixes
+
+* adding more cumulative metadata functionalities ([c7b25b2](https://github.com/maxmilhas/winston-context-logger/commit/c7b25b2c15f7442461def4ddced4fc699c7c222c))
+
 ## [0.1.2](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.1...v0.1.2) (2022-11-08)
 
 
