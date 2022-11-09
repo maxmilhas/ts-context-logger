@@ -5,6 +5,7 @@ const proto = ContextLogger.prototype;
 interface MyMeta {
 	k1: string;
 	meta: number;
+	lines: string[];
 }
 
 describe(ContextLogger.name, () => {
@@ -43,10 +44,10 @@ describe(ContextLogger.name, () => {
 		});
 
 		it('should add new meta property when a previous meta object exists', () => {
-			(meta = {
+			meta = {
 				prev: 123,
-			}),
-				getContextInfo.mockReturnValue(meta);
+			};
+			getContextInfo.mockReturnValue(meta);
 
 			const result = target.addMeta('k1', 'v1');
 
@@ -57,6 +58,26 @@ describe(ContextLogger.name, () => {
 				prev: 123,
 				k1: 'v1',
 			});
+		});
+
+		it('should add meta that expires after some logs when expiresCount is informed', () => {
+			meta = {};
+			getContextInfo.mockReturnValue(meta);
+			logger.info = jest.fn();
+
+			const result = target.addMeta('k1', 'v1', 3);
+			target.info('log 1');
+			target.info('log 2');
+			target.info('log 3');
+			target.info('log 4');
+
+			expect(result).toBeUndefined();
+			expect(logger.info).toHaveCallsLike(
+				['log 1', { k1: 'v1' }],
+				['log 2', { k1: 'v1' }],
+				['log 3', { k1: 'v1' }],
+				['log 4', {}],
+			);
 		});
 	});
 
@@ -187,6 +208,54 @@ describe(ContextLogger.name, () => {
 
 			expect(result).toBeUndefined();
 			expect(target.log).toHaveCallsLike(['warn', 'my msg', { k1: 'my meta' }]);
+		});
+	});
+
+	describe(proto.addDurationMeta.name, () => {
+		beforeEach(() => {
+			let i = 1;
+			jest.spyOn(Date, 'now').mockImplementation(() => {
+				i += 10;
+				return i;
+			});
+			logger.info = jest.fn();
+			const context: any = {};
+			contextProvider.getContextInfo = jest.fn().mockReturnValue(context);
+		});
+
+		it('expect addDurationMeta to register spent duration seamlessly', () => {
+			target.addDurationMeta('meta');
+
+			target.info('duration 1');
+			target.info('duration 2');
+			target.info('duration 3');
+
+			expect(logger.info).toHaveCallsLike(
+				['duration 1', { meta: 10 }],
+				['duration 2', { meta: 20 }],
+				['duration 3', { meta: 30 }],
+			);
+		});
+	});
+
+	describe(proto.incTextMeta.name, () => {
+		beforeEach(() => {
+			logger.info = jest.fn();
+			const context: any = {};
+			contextProvider.getContextInfo = jest.fn().mockReturnValue(context);
+		});
+
+		it('expect addDurationMeta to register spent duration seamlessly', () => {
+			target.incTextMeta('lines', 'first line');
+			target.incTextMeta('lines', 'second line');
+			target.incTextMeta('lines', 'third line');
+
+			target.info('Message');
+
+			expect(logger.info).toHaveCallsLike([
+				'Message',
+				{ lines: ['first line', 'second line', 'third line'] },
+			]);
 		});
 	});
 });
