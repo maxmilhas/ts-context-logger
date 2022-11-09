@@ -76,7 +76,6 @@
   "devDependencies": {
     "@codibre/confs": "^1.1.2",
     "@types/jest": "^27.4.1",
-    "@types/node": "^10.17.60",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
     "del-cli": "^3.0.1",
