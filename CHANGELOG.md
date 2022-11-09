@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.3...v0.1.4) (2022-11-09)
+
+
+### Bug Fixes
+
+* adding addMetas method ([a49980d](https://github.com/maxmilhas/winston-context-logger/commit/a49980d0779d51dd49523ad43491621f229ed25a))
+
 ## [0.1.3](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.2...v0.1.3) (2022-11-09)
 
 
