@@ -39,6 +39,18 @@ export class ContextLogger<TContextLoggerMeta extends object = any> {
 		) as TContextLoggerMeta[TKey];
 	}
 
+	addMetas(metas: Partial<TContextLoggerMeta>, expiringCount = 0) {
+		for (const p in metas) {
+			if (metas.hasOwnProperty(p)) {
+				this.addMeta(
+					p,
+					metas[p] as TContextLoggerMeta[typeof p],
+					expiringCount,
+				);
+			}
+		}
+	}
+
 	removeMeta(key: keyof TContextLoggerMeta) {
 		delete this.contextProvider.getContextInfo()?.[key];
 	}

@@ -258,4 +258,31 @@ describe(ContextLogger.name, () => {
 			]);
 		});
 	});
+
+	describe(proto.addMetas.name, () => {
+		beforeEach(() => {
+			logger.info = jest.fn();
+			const context: any = {};
+			contextProvider.getContextInfo = jest.fn().mockReturnValue(context);
+		});
+
+		it('should add multiple metadatas', () => {
+			target.addMetas({
+				k1: 'v1',
+				lines: ['a'],
+				meta: 123,
+			});
+
+			target.info('Message');
+
+			expect(logger.info).toHaveCallsLike([
+				'Message',
+				{
+					k1: 'v1',
+					lines: ['a'],
+					meta: 123,
+				},
+			]);
+		});
+	});
 });
