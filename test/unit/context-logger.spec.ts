@@ -152,6 +152,7 @@ describe(ContextLogger.name, () => {
 			logger.debug = jest.fn();
 			logger.warn = jest.fn();
 			(contextProvider as any).correlationId = '789';
+			(contextProvider as any).routine = 'abc';
 			contextProvider.getContextInfo = jest
 				.fn()
 				.mockReturnValue({ baseMeta: 456 });
@@ -168,6 +169,7 @@ describe(ContextLogger.name, () => {
 					meta: 123,
 					baseMeta: 456,
 					correlationId: '789',
+					routine: 'abc',
 				},
 			]);
 			expect(logger.debug).toHaveCallsLike();
@@ -197,6 +199,7 @@ describe(ContextLogger.name, () => {
 					meta: 123,
 					baseMeta: 456,
 					correlationId: '789',
+					routine: 'abc',
 				},
 			]);
 		});

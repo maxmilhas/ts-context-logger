@@ -133,6 +133,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 
 	protected getMeta(meta: Partial<TContextLoggerMeta> | undefined) {
 		const result: Record<string, unknown> = {
+			routine: this.contextProvider.routine,
 			correlationId: this.contextProvider.correlationId,
 		};
 		const obj = this.contextProvider.getContextInfo();
