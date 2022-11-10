@@ -25,13 +25,13 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 			this[level] = (message, meta) => this.log(level, message, meta);
 		}
 		this.contextProvider.onContextEnd?.(() => {
-			if (this.pendent) {
-				const pendentLog = this.options.pendentLog ?? {};
-				this.log(
-					pendentLog.level ?? LogLevel.info,
-					pendentLog.message ?? 'Bulk messages',
-				);
-			}
+			const pendentLog = this.options.pendentLog ?? {};
+			this.log(
+				pendentLog.level ?? LogLevel.info,
+				pendentLog.message ?? 'Bulk messages',
+				undefined,
+				true,
+			);
 		});
 	}
 
@@ -111,11 +111,18 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 		);
 	}
 
-	log(level: LogLevel, message: string, meta?: Partial<TContextLoggerMeta>) {
+	log(
+		level: LogLevel,
+		message: string,
+		meta?: Partial<TContextLoggerMeta>,
+		flush = false,
+	) {
 		const { obj, mergedMeta } = this.getMeta(meta);
-		this.logger[level](message, mergedMeta);
-		if (obj) {
-			this.pendent.set(obj, false);
+		if (!flush || obj) {
+			this.logger[level](message, mergedMeta);
+			if (obj) {
+				this.pendent.set(obj, false);
+			}
 		}
 	}
 
