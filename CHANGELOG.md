@@ -1,3 +1,10 @@
+## [0.1.7](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.6...v0.1.7) (2022-11-10)
+
+
+### Bug Fixes
+
+* fixing context end flush ([9308fb1](https://github.com/maxmilhas/winston-context-logger/commit/9308fb1ce208eb76f598552d81ad79248f97c282))
+
 ## [0.1.6](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.5...v0.1.6) (2022-11-10)
 
 
