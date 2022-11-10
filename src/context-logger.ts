@@ -1,19 +1,27 @@
 import { Logger } from 'winston';
-import { ContextInfoProvider } from './context-info-provider';
+import {
+	BaseLogger,
+	ContextInfoProvider,
+	MetadataSetter,
+	MetaValue,
+	TypeFields,
+	LogLevel,
+} from './types';
+import { BulkLogger } from './bulk-logger';
+import { getLogLevels } from './get-log-levels';
 
-export type TypeFields<T extends object, DesiredType> = NonNullable<
-	{
-		[K in keyof T]: T[K] extends DesiredType ? K : never;
-	}[keyof T]
->;
-export type FuncType<T> = () => MetaValue<T>;
-export type MetaValue<T> = T | FuncType<T>;
-
-export class ContextLogger<TContextLoggerMeta extends object = any> {
+export class ContextLogger<TContextLoggerMeta extends object = any>
+	implements BaseLogger<TContextLoggerMeta>, MetadataSetter<TContextLoggerMeta>
+{
+	readonly bulk = new BulkLogger(this);
 	constructor(
 		private logger: Logger,
 		private contextProvider: ContextInfoProvider<TContextLoggerMeta>,
-	) {}
+	) {
+		for (const level of getLogLevels()) {
+			this[level] = (message, meta) => this.log(level, message, meta);
+		}
+	}
 
 	addMeta<TKey extends keyof TContextLoggerMeta>(
 		key: TKey,
@@ -90,11 +98,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any> {
 		);
 	}
 
-	log(
-		level: 'info' | 'error' | 'warn' | 'debug',
-		message: string,
-		meta?: Partial<TContextLoggerMeta>,
-	) {
+	log(level: LogLevel, message: string, meta?: Partial<TContextLoggerMeta>) {
 		this.logger[level](message, this.getMeta(meta));
 	}
 
@@ -114,18 +118,6 @@ export class ContextLogger<TContextLoggerMeta extends object = any> {
 		}
 		return Object.assign(result, meta);
 	}
-
-	info(message: string, meta?: Partial<TContextLoggerMeta>): void {
-		this.log('info', message, meta);
-	}
-
-	error(message: string, meta?: Partial<TContextLoggerMeta>): void {
-		this.log('error', message, meta);
-	}
-	warn(message: string, meta?: Partial<TContextLoggerMeta>): void {
-		this.log('warn', message, meta);
-	}
-	debug(message: string, meta?: Partial<TContextLoggerMeta>): void {
-		this.log('debug', message, meta);
-	}
 }
+export interface ContextLogger<TContextLoggerMeta extends object = any>
+	extends BaseLogger<TContextLoggerMeta> {}

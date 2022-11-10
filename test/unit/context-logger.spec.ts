@@ -1,5 +1,6 @@
 import { Logger } from 'winston';
-import { ContextInfoProvider, ContextLogger } from '../../src';
+import { ContextInfoProvider, ContextLogger, BulkLogger } from '../../src';
+import { getLogLevels } from '../../src/get-log-levels';
 
 const proto = ContextLogger.prototype;
 interface MyMeta {
@@ -17,6 +18,10 @@ describe(ContextLogger.name, () => {
 		logger = {} as any;
 		contextProvider = {} as any;
 		target = new ContextLogger(logger, contextProvider);
+	});
+
+	it('should contains a bulk logger', () => {
+		expect(target.bulk).toBeInstanceOf(BulkLogger);
 	});
 
 	describe(proto.addMeta.name, () => {
@@ -155,61 +160,23 @@ describe(ContextLogger.name, () => {
 		});
 	});
 
-	describe(proto.debug.name, () => {
-		beforeEach(() => {
-			jest.spyOn(target, 'log').mockReturnValue(undefined);
-		});
-		it('should call log with debug level', () => {
-			const result = target.debug('my msg', { k1: 'my meta' });
+	for (const level of getLogLevels()) {
+		describe(level, () => {
+			beforeEach(() => {
+				jest.spyOn(target, 'log').mockReturnValue(undefined);
+			});
+			it(`should call log with ${level} level`, () => {
+				const result = target[level]('my msg', { k1: 'my meta' });
 
-			expect(result).toBeUndefined();
-			expect(target.log).toHaveCallsLike([
-				'debug',
-				'my msg',
-				{ k1: 'my meta' },
-			]);
+				expect(result).toBeUndefined();
+				expect(target.log).toHaveCallsLike([
+					level,
+					'my msg',
+					{ k1: 'my meta' },
+				]);
+			});
 		});
-	});
-
-	describe(proto.info.name, () => {
-		beforeEach(() => {
-			jest.spyOn(target, 'log').mockReturnValue(undefined);
-		});
-		it('should call log with info level', () => {
-			const result = target.info('my msg', { k1: 'my meta' });
-
-			expect(result).toBeUndefined();
-			expect(target.log).toHaveCallsLike(['info', 'my msg', { k1: 'my meta' }]);
-		});
-	});
-
-	describe(proto.error.name, () => {
-		beforeEach(() => {
-			jest.spyOn(target, 'log').mockReturnValue(undefined);
-		});
-		it('should call log with error level', () => {
-			const result = target.error('my msg', { k1: 'my meta' });
-
-			expect(result).toBeUndefined();
-			expect(target.log).toHaveCallsLike([
-				'error',
-				'my msg',
-				{ k1: 'my meta' },
-			]);
-		});
-	});
-
-	describe(proto.warn.name, () => {
-		beforeEach(() => {
-			jest.spyOn(target, 'log').mockReturnValue(undefined);
-		});
-		it('should call log with warn level', () => {
-			const result = target.warn('my msg', { k1: 'my meta' });
-
-			expect(result).toBeUndefined();
-			expect(target.log).toHaveCallsLike(['warn', 'my msg', { k1: 'my meta' }]);
-		});
-	});
+	}
 
 	describe(proto.addDurationMeta.name, () => {
 		beforeEach(() => {
