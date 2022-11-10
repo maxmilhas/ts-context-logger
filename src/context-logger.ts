@@ -9,18 +9,30 @@ import {
 } from './types';
 import { BulkLogger } from './bulk-logger';
 import { getLogLevels } from './get-log-levels';
+import { ContextLoggerOptions } from './types/context-logger-options';
 
 export class ContextLogger<TContextLoggerMeta extends object = any>
 	implements BaseLogger<TContextLoggerMeta>, MetadataSetter<TContextLoggerMeta>
 {
+	private pendent = new WeakMap<Partial<TContextLoggerMeta>, boolean>();
 	readonly bulk = new BulkLogger(this);
 	constructor(
 		private logger: Logger,
 		private contextProvider: ContextInfoProvider<TContextLoggerMeta>,
+		private options: ContextLoggerOptions = {},
 	) {
 		for (const level of getLogLevels()) {
 			this[level] = (message, meta) => this.log(level, message, meta);
 		}
+		this.contextProvider.onContextEnd?.(() => {
+			if (this.pendent) {
+				const pendentLog = this.options.pendentLog ?? {};
+				this.log(
+					pendentLog.level ?? LogLevel.info,
+					pendentLog.message ?? 'Bulk messages',
+				);
+			}
+		});
 	}
 
 	addMeta<TKey extends keyof TContextLoggerMeta>(
@@ -45,6 +57,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 						return result;
 				  }
 		) as TContextLoggerMeta[TKey];
+		this.pendent.set(meta, true);
 	}
 
 	addMetas(metas: Partial<TContextLoggerMeta>, expiringCount = 0) {
@@ -99,7 +112,11 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 	}
 
 	log(level: LogLevel, message: string, meta?: Partial<TContextLoggerMeta>) {
-		this.logger[level](message, this.getMeta(meta));
+		const { obj, mergedMeta } = this.getMeta(meta);
+		this.logger[level](message, mergedMeta);
+		if (obj) {
+			this.pendent.set(obj, false);
+		}
 	}
 
 	protected getMeta(meta: Partial<TContextLoggerMeta> | undefined) {
@@ -116,7 +133,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 				result[prop] = value;
 			}
 		}
-		return Object.assign(result, meta);
+		return { obj, mergedMeta: Object.assign(result, meta) };
 	}
 }
 export interface ContextLogger<TContextLoggerMeta extends object = any>
