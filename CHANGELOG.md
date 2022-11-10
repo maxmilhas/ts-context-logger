@@ -1,3 +1,10 @@
+## [0.1.5](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.4...v0.1.5) (2022-11-10)
+
+
+### Bug Fixes
+
+* organizing types and creating bulk logger ([b3b4e72](https://github.com/maxmilhas/winston-context-logger/commit/b3b4e72d7465878bff12ff9b713da6944a09a61a))
+
 ## [0.1.4](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.3...v0.1.4) (2022-11-09)
 
 
