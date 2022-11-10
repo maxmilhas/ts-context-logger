@@ -1,3 +1,10 @@
+## [0.1.9](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.8...v0.1.9) (2022-11-10)
+
+
+### Bug Fixes
+
+* adding routine metadata ([d665924](https://github.com/maxmilhas/winston-context-logger/commit/d6659240a018d20314bb708a9d5e484ab2e53f27))
+
 ## [0.1.8](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.7...v0.1.8) (2022-11-10)
 
 
