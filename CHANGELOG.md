@@ -1,3 +1,10 @@
+## [0.1.6](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.5...v0.1.6) (2022-11-10)
+
+
+### Bug Fixes
+
+* adding onContextEnd support ([51cb548](https://github.com/maxmilhas/winston-context-logger/commit/51cb548d98f987335a1692a7ebe9c11906202577))
+
 ## [0.1.5](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.4...v0.1.5) (2022-11-10)
 
 
