@@ -8,22 +8,25 @@ import {
 	LogLevel,
 } from './types';
 import { BulkLogger } from './bulk-logger';
-import { getLogLevels } from './get-log-levels';
 import { ContextLoggerOptions } from './types/context-logger-options';
 
 export class ContextLogger<TContextLoggerMeta extends object = any>
 	implements BaseLogger<TContextLoggerMeta>, MetadataSetter<TContextLoggerMeta>
 {
 	private pendent = new WeakMap<Partial<TContextLoggerMeta>, boolean>();
-	readonly bulk = new BulkLogger(this);
+	readonly bulk: BulkLogger;
+	readonly availableLevels: LogLevel[];
+
 	constructor(
 		private logger: Logger,
 		private contextProvider: ContextInfoProvider<TContextLoggerMeta>,
 		private options: ContextLoggerOptions = {},
 	) {
-		for (const level of getLogLevels()) {
+		this.availableLevels = Object.keys(this.logger.levels) as LogLevel[];
+		for (const level of this.availableLevels) {
 			this[level] = (message, meta) => this.log(level, message, meta);
 		}
+		this.bulk = new BulkLogger(this, this.availableLevels);
 		this.contextProvider.onContextEnd?.(() => {
 			const pendentLog = this.options.pendentLog ?? {};
 			this.log(
@@ -117,11 +120,13 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 		meta?: Partial<TContextLoggerMeta>,
 		flush = false,
 	) {
-		const { obj, mergedMeta } = this.getMeta(meta);
-		if (!flush || obj) {
-			this.logger[level](message, mergedMeta);
-			if (obj) {
-				this.pendent.set(obj, false);
+		if (this.logger.levels[this.logger.level] <= this.logger.levels[level]) {
+			const { obj, mergedMeta } = this.getMeta(meta);
+			if (!flush || obj) {
+				this.logger[level](message, mergedMeta);
+				if (obj) {
+					this.pendent.set(obj, false);
+				}
 			}
 		}
 	}

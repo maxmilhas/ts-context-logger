@@ -1,9 +1,8 @@
-import { getLogLevels } from './get-log-levels';
-import { BaseLogger, MetadataSetter, StringField } from './types';
+import { BaseLogger, LogLevel, MetadataSetter, StringField } from './types';
 
 export class BulkLogger<T extends object = any> implements BaseLogger<T> {
-	constructor(private setter: MetadataSetter<T>) {
-		for (const level of getLogLevels()) {
+	constructor(private setter: MetadataSetter<T>, levels: LogLevel[]) {
+		for (const level of levels) {
 			this[level] = (message, meta) => {
 				this.setter.incTextMeta(
 					'bulkMessages' as unknown as StringField<T>,

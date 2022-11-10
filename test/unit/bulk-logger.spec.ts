@@ -1,16 +1,16 @@
-import { BulkLogger, MetadataSetter } from '../../src';
-import { getLogLevels } from '../../src/get-log-levels';
+import { BulkLogger, LogLevel, MetadataSetter } from '../../src';
 
 describe(BulkLogger.name, () => {
+	const levels = Object.values(LogLevel);
 	let target: BulkLogger;
 	let setter: MetadataSetter<any>;
 
 	beforeEach(() => {
 		setter = {} as any;
-		target = new BulkLogger(setter);
+		target = new BulkLogger(setter, levels);
 	});
 
-	for (const level of getLogLevels()) {
+	for (const level of levels) {
 		describe(level, () => {
 			beforeEach(() => {
 				setter.incTextMeta = jest.fn();

@@ -1,6 +1,11 @@
 import { Logger } from 'winston';
-import { ContextInfoProvider, ContextLogger, BulkLogger } from '../../src';
-import { getLogLevels } from '../../src/get-log-levels';
+import { AbstractConfigSetLevels } from 'winston/lib/winston/config';
+import {
+	ContextInfoProvider,
+	ContextLogger,
+	BulkLogger,
+	LogLevel,
+} from '../../src';
 
 const proto = ContextLogger.prototype;
 interface MyMeta {
@@ -15,7 +20,15 @@ describe(ContextLogger.name, () => {
 	let contextProvider: ContextInfoProvider<any>;
 
 	beforeEach(() => {
-		logger = {} as any;
+		logger = {
+			level: 'info',
+			levels: {
+				debug: 0,
+				info: 1,
+				warn: 2,
+				error: 3,
+			} as AbstractConfigSetLevels,
+		} as Logger;
 		contextProvider = {} as any;
 		target = new ContextLogger(logger, contextProvider);
 	});
@@ -134,10 +147,10 @@ describe(ContextLogger.name, () => {
 	});
 
 	describe(proto.log.name, () => {
-		let spy: jest.SpyInstance;
-
 		beforeEach(() => {
-			spy = (logger as any).anyMethod = jest.fn();
+			logger.info = jest.fn();
+			logger.debug = jest.fn();
+			logger.warn = jest.fn();
 			(contextProvider as any).correlationId = '789';
 			contextProvider.getContextInfo = jest
 				.fn()
@@ -145,11 +158,40 @@ describe(ContextLogger.name, () => {
 		});
 
 		it('should call the correspondent level method joining metadatas', () => {
-			const result = target.log('anyMethod' as any, 'my msg', { meta: 123 });
+			const result = target.log(LogLevel.info, 'my msg', { meta: 123 });
 
 			expect(result).toBeUndefined();
 			expect(contextProvider.getContextInfo).toHaveCallsLike([]);
-			expect(spy).toHaveCallsLike([
+			expect(logger.info).toHaveCallsLike([
+				'my msg',
+				{
+					meta: 123,
+					baseMeta: 456,
+					correlationId: '789',
+				},
+			]);
+			expect(logger.debug).toHaveCallsLike();
+			expect(logger.warn).toHaveCallsLike();
+		});
+
+		it('should not log when setted log level is greater than informed one', () => {
+			const result = target.log(LogLevel.debug, 'my msg', { meta: 123 });
+
+			expect(result).toBeUndefined();
+			expect(contextProvider.getContextInfo).toHaveCallsLike();
+			expect(logger.info).toHaveCallsLike();
+			expect(logger.debug).toHaveCallsLike();
+			expect(logger.warn).toHaveCallsLike();
+		});
+
+		it('should call the correspondent level method joining metadatas when log level is greater than the informed one', () => {
+			const result = target.log(LogLevel.warn, 'my msg', { meta: 123 });
+
+			expect(result).toBeUndefined();
+			expect(contextProvider.getContextInfo).toHaveCallsLike([]);
+			expect(logger.info).toHaveCallsLike();
+			expect(logger.debug).toHaveCallsLike();
+			expect(logger.warn).toHaveCallsLike([
 				'my msg',
 				{
 					meta: 123,
@@ -160,7 +202,7 @@ describe(ContextLogger.name, () => {
 		});
 	});
 
-	for (const level of getLogLevels()) {
+	for (const level of Object.values(LogLevel)) {
 		describe(level, () => {
 			beforeEach(() => {
 				jest.spyOn(target, 'log').mockReturnValue(undefined);
