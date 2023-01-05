@@ -1,3 +1,10 @@
+## [0.1.10](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.9...v0.1.10) (2023-01-05)
+
+
+### Bug Fixes
+
+* log level rule ([434dda1](https://github.com/maxmilhas/winston-context-logger/commit/434dda1b777b5dd2df0ab7163c30c4aa9fd6b52e))
+
 ## [0.1.9](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.8...v0.1.9) (2022-11-10)
 
 
