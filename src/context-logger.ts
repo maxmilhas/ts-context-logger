@@ -1,3 +1,4 @@
+import { LevelRank } from './types/log-level';
 import { Logger } from 'winston';
 import {
 	BaseLogger,
@@ -120,7 +121,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 		meta?: Partial<TContextLoggerMeta>,
 		flush = false,
 	) {
-		if (this.logger.levels[this.logger.level] <= this.logger.levels[level]) {
+		if (LevelRank[this.logger.level] >= LevelRank[level]) {
 			const { obj, mergedMeta } = this.getMeta(meta);
 			if (!flush || obj) {
 				this.logger[level](message, mergedMeta);
