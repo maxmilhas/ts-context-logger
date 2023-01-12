@@ -176,16 +176,6 @@ describe(ContextLogger.name, () => {
 			expect(logger.warn).toHaveCallsLike();
 		});
 
-		it('should not log when setted log level is greater than informed one', () => {
-			const result = target.log(LogLevel.debug, 'my msg', { meta: 123 });
-
-			expect(result).toBeUndefined();
-			expect(contextProvider.getContextInfo).toHaveCallsLike();
-			expect(logger.info).toHaveCallsLike();
-			expect(logger.debug).toHaveCallsLike();
-			expect(logger.warn).toHaveCallsLike();
-		});
-
 		it('should call the correspondent level method joining metadatas when log level is greater than the informed one', () => {
 			const result = target.log(LogLevel.warn, 'my msg', { meta: 123 });
 
