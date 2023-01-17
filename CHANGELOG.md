@@ -1,3 +1,11 @@
+## [0.1.11](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.10...v0.1.11) (2023-01-17)
+
+
+### Bug Fixes
+
+* fixing pipeline ([7cf3549](https://github.com/maxmilhas/winston-context-logger/commit/7cf3549370ba2b17012af409c89e22cf49472d34))
+* removing level analysis ([3a5492a](https://github.com/maxmilhas/winston-context-logger/commit/3a5492aa2babc2f8c8a161abb5208fab0a65bf17))
+
 ## [0.1.10](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.9...v0.1.10) (2023-01-05)
 
 
