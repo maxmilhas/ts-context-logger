@@ -129,7 +129,22 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 		}
 	}
 
+	contextualize<Callback extends (...args: any[]) => any>(
+		callback: Callback,
+	): Callback {
+		const { result } = this.prepareMeta();
+		return ((...args: Parameters<Callback>) => {
+			this.contextProvider.setContextInfo(result as TContextLoggerMeta);
+			return callback(...args);
+		}) as Callback;
+	}
+
 	protected getMeta(meta: Partial<TContextLoggerMeta> | undefined) {
+		const { obj, result } = this.prepareMeta();
+		return { obj, mergedMeta: Object.assign(result, meta) };
+	}
+
+	private prepareMeta() {
 		const result: Record<string, unknown> = {
 			routine: this.contextProvider.routine,
 			correlationId: this.contextProvider.correlationId,
@@ -144,7 +159,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 				result[prop] = value;
 			}
 		}
-		return { obj, mergedMeta: Object.assign(result, meta) };
+		return { obj, result };
 	}
 }
 export interface ContextLogger<TContextLoggerMeta extends object = any>

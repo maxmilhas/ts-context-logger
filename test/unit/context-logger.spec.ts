@@ -287,4 +287,46 @@ describe(ContextLogger.name, () => {
 			]);
 		});
 	});
+
+	describe(proto.contextualize.name, () => {
+		const context: any = {};
+		beforeEach(() => {
+			let settled = context;
+			logger.info = jest.fn();
+			contextProvider.getContextInfo = jest
+				.fn()
+				.mockImplementation(() => settled);
+			contextProvider.setContextInfo = jest
+				.fn()
+				.mockImplementation((x) => (settled = x));
+		});
+
+		it('should return a callback with cloned current context', () => {
+			(contextProvider as any).correlationId = 'my correlation id';
+			(contextProvider as any).routine = 'my routine';
+			context.field1 = 'test1';
+			context.field2 = true;
+			context.field3 = 12;
+
+			const callback = target.contextualize(() => target.info('Message'));
+			delete context.field1;
+			delete context.field2;
+			delete context.field3;
+			(contextProvider as any).correlationId =
+				'not the correlation id that I want';
+			(contextProvider as any).routine = 'not the routine that I want';
+			callback();
+
+			expect(logger.info).toHaveCallsLike([
+				'Message',
+				{
+					correlationId: 'my correlation id',
+					routine: 'my routine',
+					field1: 'test1',
+					field2: true,
+					field3: 12,
+				},
+			]);
+		});
+	});
 });
