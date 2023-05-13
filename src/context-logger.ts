@@ -9,6 +9,10 @@ import {
 } from './types';
 import { BulkLogger } from './bulk-logger';
 import { ContextLoggerOptions } from './types/context-logger-options';
+import {
+	asyncLocalStorageContextProvider,
+	RequestContext,
+} from './async-local-storage';
 
 export class ContextLogger<TContextLoggerMeta extends object = any>
 	implements BaseLogger<TContextLoggerMeta>, MetadataSetter<TContextLoggerMeta>
@@ -19,7 +23,7 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 
 	constructor(
 		private logger: Logger,
-		private contextProvider: ContextInfoProvider<TContextLoggerMeta>,
+		private contextProvider: ContextInfoProvider<TContextLoggerMeta> = asyncLocalStorageContextProvider,
 		private options: ContextLoggerOptions = {},
 	) {
 		this.availableLevels = Object.keys(this.logger.levels) as LogLevel[];
@@ -145,6 +149,10 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 			}
 		}
 		return { obj, mergedMeta: Object.assign(result, meta) };
+	}
+
+	static setContext(routine: string, correlationId?: string) {
+		return RequestContext.setContext(routine, correlationId);
 	}
 }
 export interface ContextLogger<TContextLoggerMeta extends object = any>
