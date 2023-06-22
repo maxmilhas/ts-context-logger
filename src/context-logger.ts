@@ -1,4 +1,4 @@
-import { Logger } from 'winston';
+import { LogEntry, Logger } from 'winston';
 import {
 	BaseLogger,
 	ContextInfoProvider,
@@ -118,15 +118,27 @@ export class ContextLogger<TContextLoggerMeta extends object = any>
 		);
 	}
 
+	log(level: LogEntry): void;
 	log(
 		level: LogLevel,
 		message: string,
 		meta?: Partial<TContextLoggerMeta>,
+		flush?: boolean,
+	): void;
+	log(
+		level: LogLevel | LogEntry,
+		message?: string,
+		meta?: Partial<TContextLoggerMeta>,
 		flush = false,
 	) {
+		if (typeof level !== 'string') {
+			meta = level.meta;
+			message = level.message;
+			level = level.level as LogLevel;
+		}
 		const { obj, mergedMeta } = this.getMeta(meta);
 		if (!flush || obj) {
-			this.logger[level](message, mergedMeta);
+			this.logger[level](message as string, mergedMeta);
 			if (obj) {
 				this.pendent.set(obj, false);
 			}
