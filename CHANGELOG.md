@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.11...v0.2.0) (2023-06-22)
+
+
+### Bug Fixes
+
+* fixing log call with LogEntry ([a898c0a](https://github.com/maxmilhas/winston-context-logger/commit/a898c0af59751bdd4528d961f52ab0f26b3a0100))
+
+
+### Features
+
+* adding own Request Context ([40ae489](https://github.com/maxmilhas/winston-context-logger/commit/40ae489206d08c9f3cc428b7af40164eeecfb8d5))
+
 ## [0.1.11](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.10...v0.1.11) (2023-01-17)
 
 
