@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/maxmilhas/winston-context-logger/compare/v0.2.0...v0.2.1) (2023-07-06)
+
+
+### Bug Fixes
+
+* removing node-cleanup, as it has unexpected behavior ([#3](https://github.com/maxmilhas/winston-context-logger/issues/3)) ([5099f0c](https://github.com/maxmilhas/winston-context-logger/commit/5099f0cdacd1f8b7a0f9ee1b40f0e8e1ce31d9f4))
+
 # [0.2.0](https://github.com/maxmilhas/winston-context-logger/compare/v0.1.11...v0.2.0) (2023-06-22)
 
 
