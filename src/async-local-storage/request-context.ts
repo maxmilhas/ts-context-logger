@@ -1,6 +1,5 @@
 import { ContextInfoProvider } from './../types/context-info-provider';
 import { v4 } from 'uuid';
-import * as nodeCleanup from 'node-cleanup';
 import { AsyncLocalStorage } from 'async_hooks';
 
 const onContextEndList: Array<(routine?: string) => void> = [];
@@ -101,8 +100,6 @@ export class AsyncLocalStorageContextProvider<T extends object>
 		}) as Callback;
 	}
 }
-
-nodeCleanup(RequestContext.flush.bind(RequestContext));
 
 export const asyncLocalStorageContextProvider =
 	new AsyncLocalStorageContextProvider();
